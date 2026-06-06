@@ -1,0 +1,8 @@
+{
+  "name": "MosaicMediaWidget",
+  "description": "Simple mosaic media widget :)",
+  "uuid": "mosaicmediawiget@stevebartmoss.com",
+  "shell-version": [
+    "50"
+  ]
+}
