@@ -8,22 +8,28 @@ import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 import { ImageWidget } from './src/imageWidget.js';
+import { ImageList } from './src/imageList.js';
 
 export default class ExampleExtension extends Extension {
     enable() {
 
-        this.images = [];
+        this.imageWidget = new ImageWidget();
+
+
+        this.imageList = new ImageList(this.path)
+
+        this.imageList.loadImages();
+        this.imageList.shuffle();
+
+        this.images = this.imageList.getImages();
+
         this.currentIndex = 0;
         this.paused = false;
-
-        this.loadImages();
 
         if (this.images.length === 0) {
             console.error('MOSAI: No se encontraron imágenes');
             return;
         }
-
-        this.shuffleImages();
 
         this.createWidget();
         this.createMenu();
@@ -141,34 +147,12 @@ export default class ExampleExtension extends Extension {
         );
     }
 
-    shuffleImages() {
-
-        for (
-            let i = this.images.length - 1;
-            i > 0;
-            i--
-        ) {
-
-            const j =
-                Math.floor(
-                    Math.random() * (i + 1)
-                );
-
-            [
-                this.images[i],
-                this.images[j]
-            ] = [
-                    this.images[j],
-                    this.images[i]
-                ];
-        }
-    }
-
     reloadImages() {
 
-        this.images = [];
+        this.imageList.loadImages();
+        this.imageList.shuffle();
 
-        this.loadImages();
+        this.images = this.imageList.getImages();        
 
         if (this.images.length === 0) {
 
@@ -178,8 +162,6 @@ export default class ExampleExtension extends Extension {
 
             return;
         }
-
-        this.shuffleImages();
 
         this.currentIndex = 0;
 
@@ -247,51 +229,11 @@ export default class ExampleExtension extends Extension {
 
         this.monitor = null;
 
-        this.widget?.destroy();
-
-        this.widget = null;
+        this.imageWidget?.destroy();
 
         this._indicator?.destroy();
 
         this._indicator = null;
-    }
-
-    loadImages() {
-
-        const imageDir = Gio.File.new_for_path(
-            `${this.path}/img`
-        );
-
-        const enumerator = imageDir.enumerate_children(
-            'standard::*',
-            Gio.FileQueryInfoFlags.NONE,
-            null
-        );
-
-        let info;
-
-        while ((info = enumerator.next_file(null)) !== null) {
-
-            const filename = info.get_name();
-
-            const lower = filename.toLowerCase();
-
-            if (
-                lower.endsWith('.jpg') ||
-                lower.endsWith('.jpeg') ||
-                lower.endsWith('.png') ||
-                lower.endsWith('.webp')
-            ) {
-                this.images.push(
-                    `${this.path}/img/${filename}`
-                );
-            }
-        }
-
-        console.log(
-            `MOSAI: ${this.images.length} imágenes encontradas`
-        );
-
     }
 
     nextImage() {
