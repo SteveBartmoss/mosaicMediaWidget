@@ -7,6 +7,8 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
+import { ImageWidget } from './src/imageWidget.js';
+
 export default class ExampleExtension extends Extension {
     enable() {
 
@@ -36,20 +38,10 @@ export default class ExampleExtension extends Extension {
 
     createWidget() {
 
-        this.widget = new St.Widget({
-            style: this.buildImageStyle(
+        this.widget =
+            this.imageWidget.createWidget(
                 this.images[this.currentIndex]
-            )
-        });
-
-        Main.layoutManager.addChrome(
-            this.widget
-        );
-
-        this.widget.set_position(
-            100,
-            100
-        );
+            );
     }
 
     createMenu() {
@@ -227,12 +219,8 @@ export default class ExampleExtension extends Extension {
 
     updateImage() {
 
-        this.widget.set_style(
-            this.buildImageStyle(
-                this.images[
-                this.currentIndex
-                ]
-            )
+        this.imageWidget.updateImage(
+            this.images[this.currentIndex]
         );
     }
 
@@ -304,26 +292,6 @@ export default class ExampleExtension extends Extension {
             `MOSAI: ${this.images.length} imágenes encontradas`
         );
 
-    }
-
-    buildImageStyle(path) {
-
-        return `
-            background-image:
-                url("${path}");
-
-            background-size:
-                contain;
-
-            background-repeat:
-                no-repeat;
-
-            background-position:
-                center;
-
-            width: 300px;
-            height: 300px;
-        `;
     }
 
     nextImage() {
