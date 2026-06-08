@@ -10,8 +10,6 @@ export class ImageWidget {
             background-repeat: no-repeat;
             background-position: center;
             border-radius: 10px;
-            width: 200px;
-            height: 200px;
         `;
     }
 
@@ -21,14 +19,13 @@ export class ImageWidget {
             style: this.buildImageStyle(img)
         });
 
+        this.widget.set_size(200,200);
+
         Main.layoutManager.addChrome(
             this.widget
         );
 
-        this.widget.set_position(
-            100,
-            100
-        );
+        this.widget.set_position(100,100);
 
         return this.widget;
     }
@@ -41,6 +38,9 @@ export class ImageWidget {
         this.widget.set_style(
             this.buildImageStyle(path)
         );
+
+        this.widget.set_size(200,200);
+        
     }
 
     destroy() {
